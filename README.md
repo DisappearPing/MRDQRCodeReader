@@ -15,7 +15,7 @@ And in which Controller You want to use
 
 ```swift
 // First step 
-YourController: ...,MRDQRCodeReaderViewControllerDelegate
+class YourController: UIViewController,MRDQRCodeReaderViewControllerDelegate{
 lazy var reader = MRDQRCodeReaderViewController(metadataObjectTypes: [AVMetadataObjectTypeQRCode])
 // Second step
 @IBAction func scanBtnTouch(sender: UIButton) {
@@ -57,5 +57,6 @@ func reader(reader: MRDQRCodeReaderViewController, didScanResult result: MRDQRCo
 
 func readerDidCancel(reader: MRDQRCodeReaderViewController) {
     self.dismissViewControllerAnimated(true, completion: nil)
+}
 }
 ```
