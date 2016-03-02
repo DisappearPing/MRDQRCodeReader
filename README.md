@@ -15,6 +15,7 @@ And in which Controller You want to use
 
 ```swift
 // First step 
+import AVFoundation
 class YourController: UIViewController,MRDQRCodeReaderViewControllerDelegate{
 lazy var reader = MRDQRCodeReaderViewController(metadataObjectTypes: [AVMetadataObjectTypeQRCode])
 // Second step
