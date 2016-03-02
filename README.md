@@ -15,6 +15,7 @@ And in which Controller You want to use
 
 ```swift
 // First step 
+YourController: ...,MRDQRCodeReaderViewControllerDelegate
 lazy var reader = MRDQRCodeReaderViewController(metadataObjectTypes: [AVMetadataObjectTypeQRCode])
 // Second step
 @IBAction func scanBtnTouch(sender: UIButton) {
