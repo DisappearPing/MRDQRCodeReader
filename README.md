@@ -15,59 +15,49 @@ And in which Controller You want to use
 
 ```swift
 // First step 
-lazy var reader = QRCodeReaderViewController(metadataObjectTypes: [AVMetadataObjectTypeQRCode])
+lazy var reader = MRDQRCodeReaderViewController(metadataObjectTypes: [AVMetadataObjectTypeQRCode])
 // Second step
- @IBAction func startScan(sender: UIButton) {
-        guard QRCodeReader.isAvailable() != false else{
-            print("not available")
+ @IBAction func scanBtnTouch(sender: UIButton) {
+        if MRDQRCodeReader.supportsMetadataObjectTypes() {
             
-            return
-        }
-        
-        reader.delegate = self
-        reader.modalPresentationStyle = .FormSheet
-        presentViewController(reader, animated: true) { () -> Void in
+            reader.modalPresentationStyle = .FormSheet
+            reader.delegate               = self
             
+            reader.completionBlock = { (result: MRDQRCodeReaderResult?) in
+                if let result = result {
+                    print("Completion with result: \(result.string) of type \(result.type)")
+                }
+            }
+            
+            presentViewController(reader, animated: true, completion: nil)
+            
+        }else{
+            let alert = UIAlertController(title: "Error", message: "Reader not supported by the current device", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+            
+            presentViewController(alert, animated: true, completion: nil)
         }
+    
     }
 // Third step
-// MARK: QRCodeReaderViewControllerDelegate
+// MARK: - MRDQRCodeReader Delegate Methods
     
-    func reader(reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
-        
-        let theResultString = result.value
-        let theResultType = result.metadataType
-        
-        self.dismissViewControllerAnimated(true) { () -> Void in
+    func reader(reader: MRDQRCodeReaderViewController, didScanResult result: MRDQRCodeReaderResult) {
+        self.dismissViewControllerAnimated(true, completion: { [weak self] in
+            let alert = UIAlertController(
+                title: "QRCodeReader",
+                message: String (format:"%@ (of type %@)", result.string, result.type),
+                preferredStyle: .Alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
             
-            let alert = UIAlertController(title: "掃描結果", message: "\(theResultString))", preferredStyle: .Alert)
-            
-            let confirmAction = UIAlertAction(title: "前往", style: UIAlertActionStyle.Destructive, handler: { (alert) -> Void in
-                guard UIApplication.sharedApplication().canOpenURL(NSURL(string:theResultString)!) != false else {
-                    
-                   
-                    
-                    return
-                }
-                
-                UIApplication.sharedApplication().openURL(NSURL(string:theResultString)!)
+            self?.presentViewController(alert, animated: true, completion: nil)
             })
-            let cancelAction = UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (alert) -> Void in
-                
-            })
-            
-            
-            alert.addAction(confirmAction)
-            alert.addAction(cancelAction)
-            
-            self.presentViewController(alert, animated: true, completion: nil)
-        }
     }
     
-    func readerDidCancel(reader: QRCodeReaderViewController) {
-        self.dismissViewControllerAnimated(true) { () -> Void in
-            
-        }
+    func readerDidCancel(reader: MRDQRCodeReaderViewController) {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
+
 
 ```
